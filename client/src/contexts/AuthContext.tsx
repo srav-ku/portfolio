@@ -37,6 +37,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Check if user is admin
   const checkAdminRole = async (uid: string): Promise<boolean> => {
+    if (!db) return false; // No Firebase, no admin roles
     try {
       const userDoc = await getDoc(doc(db, 'users', uid));
       if (userDoc.exists()) {
@@ -52,6 +53,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Login function
   const login = async (email: string, password: string): Promise<boolean> => {
+    if (!auth) {
+      console.warn('Firebase auth not available');
+      return false;
+    }
     try {
       setLoading(true);
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -73,6 +78,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Logout function
   const logout = async (): Promise<void> => {
+    if (!auth) {
+      console.warn('Firebase auth not available');
+      return;
+    }
     try {
       await signOut(auth);
     } catch (error) {
@@ -82,6 +91,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Listen for auth state changes
   useEffect(() => {
+    if (!auth) {
+      // No Firebase auth, set loading to false
+      setLoading(false);
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         const isUserAdmin = await checkAdminRole(firebaseUser.uid);
@@ -89,7 +104,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setIsAdmin(isUserAdmin);
         
         // If user is not admin, sign them out
-        if (!isUserAdmin) {
+        if (!isUserAdmin && auth) {
           await signOut(auth);
           setUser(null);
           setIsAdmin(false);

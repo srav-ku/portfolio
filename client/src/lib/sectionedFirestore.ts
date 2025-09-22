@@ -35,6 +35,10 @@ export class SectionedFirestoreService {
    * Save a specific section to its own document
    */
   async saveSection(sectionName: SectionName, sectionData: any): Promise<boolean> {
+    if (!db) {
+      console.warn('Firebase not available for saving section');
+      return false;
+    }
     try {
       console.log(`🔄 Saving ${sectionName} section...`);
       console.log(`📋 Section data keys:`, Object.keys(sectionData || {}));
@@ -51,7 +55,11 @@ export class SectionedFirestoreService {
       
       console.log(`✅ Successfully saved ${sectionName} section`);
       return true;
-    } catch (error) {
+    } catch (error: any) {
+      // Silently handle aborted requests
+      if (error.code === 'cancelled' || error.message?.includes('aborted')) {
+        return false;
+      }
       console.error(`❌ Error saving ${sectionName} section:`, error);
       return false;
     }
@@ -82,7 +90,11 @@ export class SectionedFirestoreService {
       }
       
       return allSuccessful;
-    } catch (error) {
+    } catch (error: any) {
+      // Silently handle aborted requests
+      if (error.code === 'cancelled' || error.message?.includes('aborted')) {
+        return false;
+      }
       console.error('❌ Error saving all sections:', error);
       return false;
     }
@@ -92,6 +104,10 @@ export class SectionedFirestoreService {
    * Load a specific section from its document
    */
   async loadSection(sectionName: SectionName): Promise<any | null> {
+    if (!db) {
+      console.warn('Firebase not available for loading section');
+      return null;
+    }
     try {
       console.log(`📥 Loading ${sectionName} section...`);
       
@@ -108,7 +124,11 @@ export class SectionedFirestoreService {
       
       console.log(`ℹ️  No document found for ${sectionName}`);
       return null;
-    } catch (error) {
+    } catch (error: any) {
+      // Silently handle aborted requests
+      if (error.code === 'cancelled' || error.message?.includes('aborted')) {
+        return null;
+      }
       console.error(`❌ Error loading ${sectionName} section:`, error);
       return null;
     }
@@ -139,7 +159,11 @@ export class SectionedFirestoreService {
       
       console.log(`✅ Loaded ${sectionKeys.length} sections:`, sectionKeys);
       return sections as SiteContent;
-    } catch (error) {
+    } catch (error: any) {
+      // Silently handle aborted requests
+      if (error.code === 'cancelled' || error.message?.includes('aborted')) {
+        return null;
+      }
       console.error('❌ Error loading all sections:', error);
       return null;
     }
@@ -149,17 +173,33 @@ export class SectionedFirestoreService {
    * Subscribe to changes in a specific section
    */
   subscribeToSection(sectionName: SectionName, callback: (data: any) => void): void {
+    if (!db) {
+      console.warn('Firebase not available for subscription');
+      callback(null);
+      return;
+    }
     const docRef = doc(db, COLLECTION_NAME, sectionName);
     
-    const unsubscribe = onSnapshot(docRef, (docSnap) => {
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        const { lastModified, version, sectionName: _, ...sectionData } = data;
-        callback(sectionData);
-      } else {
+    const unsubscribe = onSnapshot(docRef, 
+      (docSnap) => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          const { lastModified, version, sectionName: _, ...sectionData } = data;
+          callback(sectionData);
+        } else {
+          callback(null);
+        }
+      },
+      (error) => {
+        // Handle errors, especially aborted requests
+        if (error.code === 'cancelled' || error.message?.includes('aborted')) {
+          // Silently handle aborted requests - they're normal during rapid navigation
+          return;
+        }
+        console.error(`Error in ${sectionName} subscription:`, error);
         callback(null);
       }
-    });
+    );
 
     this.unsubscribers.set(sectionName, unsubscribe);
   }
@@ -206,6 +246,10 @@ export class SectionedFirestoreService {
    * Get metadata for all sections
    */
   async getAllSectionsMetadata(): Promise<Record<string, any>> {
+    if (!db) {
+      console.warn('Firebase not available for getting metadata');
+      return {};
+    }
     try {
       const metadata: Record<string, any> = {};
       
@@ -238,6 +282,10 @@ export class SectionedFirestoreService {
    * Check if content exists (any section has data)
    */
   async contentExists(): Promise<boolean> {
+    if (!db) {
+      console.warn('Firebase not available for checking content');
+      return false;
+    }
     try {
       for (const sectionName of SECTION_NAMES) {
         const docRef = doc(db, COLLECTION_NAME, sectionName);

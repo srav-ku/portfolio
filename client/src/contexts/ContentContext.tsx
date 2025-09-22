@@ -122,8 +122,8 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({
               ...defaultData, // Default fallbacks
               ...firestoreContent, // Override with Firestore data
               // Specifically ensure arrays are always arrays
-              navigation: Array.isArray(firestoreContent.navigation) ? firestoreContent.navigation : defaultData.navigation,
-              socialLinks: Array.isArray(firestoreContent.socialLinks) ? firestoreContent.socialLinks : defaultData.socialLinks,
+              navigation: Array.isArray(firestoreContent.navigation) && firestoreContent.navigation.length > 0 ? firestoreContent.navigation : defaultData.navigation,
+              socialLinks: Array.isArray(firestoreContent.socialLinks) && firestoreContent.socialLinks.length > 0 ? firestoreContent.socialLinks : defaultData.socialLinks,
               // Ensure nested objects exist
               hero: firestoreContent.hero ? { ...defaultData.hero, ...firestoreContent.hero } : defaultData.hero,
               about: firestoreContent.about ? { ...defaultData.about, ...firestoreContent.about } : defaultData.about,

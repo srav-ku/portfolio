@@ -9,7 +9,16 @@ import { useContent } from '@/contexts/ContentContext';
 
 export default function NavigationEditor() {
   const { content, updateContent } = useContent();
-  const navigation = content.navigation || [];
+  // Ensure navigation is always an array with proper fallback
+  const navigation = Array.isArray(content.navigation) ? content.navigation : [
+    { id: 'home', label: 'Home', shortcut: '1' },
+    { id: 'about', label: 'About', shortcut: '2' },
+    { id: 'skills', label: 'Skills', shortcut: '3' },
+    { id: 'projects', label: 'Projects', shortcut: '4' },
+    { id: 'experience', label: 'Experience', shortcut: '5' },
+    { id: 'certifications', label: 'Certifications', shortcut: '6' },
+    { id: 'contact', label: 'Contact', shortcut: '7' },
+  ];
 
   const addNavigationItem = () => {
     const newItem = {
