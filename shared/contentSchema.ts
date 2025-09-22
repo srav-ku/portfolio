@@ -33,6 +33,7 @@ export interface HeroContent {
     primary: {
       text: string;
       action: string;
+      url?: string;
     };
   };
 }

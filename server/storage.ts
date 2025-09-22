@@ -16,9 +16,19 @@ export interface PortfolioData {
   }>;
 }
 
+export interface ContactSubmission {
+  firstName: string;
+  lastName: string;
+  email: string;
+  subject: string;
+  message: string;
+  timestamp: string;
+}
+
 // Simple in-memory storage for development (Firebase will handle production data)
 export class DevStorage {
   private data: PortfolioData;
+  private contactSubmissions: ContactSubmission[] = [];
 
   constructor() {
     this.data = {
@@ -37,6 +47,15 @@ export class DevStorage {
   async updatePortfolioData(data: Partial<PortfolioData>): Promise<PortfolioData> {
     this.data = { ...this.data, ...data };
     return this.data;
+  }
+
+  async addContactSubmission(submission: ContactSubmission): Promise<void> {
+    this.contactSubmissions.push(submission);
+    console.log(`📧 Contact submission stored. Total: ${this.contactSubmissions.length}`);
+  }
+
+  async getContactSubmissions(): Promise<ContactSubmission[]> {
+    return [...this.contactSubmissions];
   }
 }
 

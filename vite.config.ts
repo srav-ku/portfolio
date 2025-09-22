@@ -36,10 +36,16 @@ export default defineConfig({
     outDir: path.resolve(__dirname, "dist/public"),
     emptyOutDir: true,
   },
+  // In vite.config.ts - Add these optimizations:
   server: {
     host: "0.0.0.0",
     port: 5000,
     allowedHosts: true,
+    hmr: {
+      overlay: false, // This will hide the error overlay
+      // Or configure WebSocket properly:
+      clientPort: 5000,
+    },
     fs: {
       strict: true,
       deny: ["**/.*"],
