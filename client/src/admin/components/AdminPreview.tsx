@@ -36,50 +36,56 @@ export default function AdminPreview() {
           />
         </motion.div>
         
-        {/* Preview overlay for mobile responsiveness testing */}
-        <div className="absolute top-4 right-4 flex gap-2 z-10">
+        {/* Preview overlay for mobile responsiveness testing - Vertical layout */}
+        <div className="absolute top-4 right-4 flex flex-col gap-2 z-10">
           <Button
             variant="ghost"
             size="sm"
-            className="bg-black/10 backdrop-blur-sm border border-white/20 text-white hover:bg-black/20"
+            className="bg-black/10 backdrop-blur-sm border border-white/20 text-white hover:bg-black/20 w-10 h-10 p-0 transition-all duration-200"
             onClick={() => {
               const iframe = document.querySelector('iframe');
               if (iframe) {
                 iframe.style.width = '375px'; // Mobile width
                 iframe.style.height = '100%';
                 iframe.style.margin = '0 auto';
+                iframe.style.transition = 'all 0.3s ease';
               }
             }}
+            title="Mobile view (375px)"
           >
             📱
           </Button>
           <Button
             variant="ghost"
             size="sm"
-            className="bg-black/10 backdrop-blur-sm border border-white/20 text-white hover:bg-black/20"
+            className="bg-black/10 backdrop-blur-sm border border-white/20 text-white hover:bg-black/20 w-10 h-10 p-0 transition-all duration-200"
             onClick={() => {
               const iframe = document.querySelector('iframe');
               if (iframe) {
                 iframe.style.width = '768px'; // Tablet width
                 iframe.style.height = '100%';
                 iframe.style.margin = '0 auto';
+                iframe.style.transition = 'all 0.3s ease';
               }
             }}
+            title="Tablet view (768px)"
           >
             📄
           </Button>
           <Button
             variant="ghost"
             size="sm"
-            className="bg-black/10 backdrop-blur-sm border border-white/20 text-white hover:bg-black/20"
+            className="bg-black/10 backdrop-blur-sm border border-white/20 text-white hover:bg-black/20 w-10 h-10 p-0 transition-all duration-200"
             onClick={() => {
               const iframe = document.querySelector('iframe');
               if (iframe) {
                 iframe.style.width = '100%'; // Desktop width
                 iframe.style.height = '100%';
                 iframe.style.margin = '0';
+                iframe.style.transition = 'all 0.3s ease';
               }
             }}
+            title="Desktop view (100%)"
           >
             💻
           </Button>

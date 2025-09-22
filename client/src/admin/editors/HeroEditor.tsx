@@ -8,7 +8,7 @@ import { useContent } from '@/contexts/ContentContext';
 
 export default function HeroEditor() {
   const { content, updateContent } = useContent();
-  const hero = content.hero;
+  const hero = content.hero || {};
 
   return (
     <motion.div
@@ -31,7 +31,7 @@ export default function HeroEditor() {
               <Label htmlFor="hero-first-name">First Name</Label>
               <Input
                 id="hero-first-name"
-                value={hero.title.first}
+                value={hero.title?.first || ''}
                 onChange={(e) => updateContent('hero.title.first', e.target.value)}
                 placeholder="Enter first name"
                 className="mt-2"
@@ -44,7 +44,7 @@ export default function HeroEditor() {
               <Label htmlFor="hero-last-name">Last Name</Label>
               <Input
                 id="hero-last-name"
-                value={hero.title.last}
+                value={hero.title?.last || ''}
                 onChange={(e) => updateContent('hero.title.last', e.target.value)}
                 placeholder="Enter last name"
                 className="mt-2"
@@ -62,7 +62,7 @@ export default function HeroEditor() {
             <Label htmlFor="hero-description">Tagline / Description</Label>
             <Textarea
               id="hero-description"
-              value={hero.description}
+              value={hero.description || ''}
               onChange={(e) => updateContent('hero.description', e.target.value)}
               placeholder="Enter your professional tagline"
               className="mt-2"
@@ -81,7 +81,7 @@ export default function HeroEditor() {
               <Label htmlFor="hero-button-text">Button Text</Label>
               <Input
                 id="hero-button-text"
-                value={hero.buttons.primary.text}
+                value={hero.buttons?.primary?.text || ''}
                 onChange={(e) => updateContent('hero.buttons.primary.text', e.target.value)}
                 placeholder="Button text"
                 className="mt-2"
@@ -91,7 +91,7 @@ export default function HeroEditor() {
               <Label htmlFor="hero-button-action">Button Action</Label>
               <Input
                 id="hero-button-action"
-                value={hero.buttons.primary.action}
+                value={hero.buttons?.primary?.action || ''}
                 onChange={(e) => updateContent('hero.buttons.primary.action', e.target.value)}
                 placeholder="Action identifier"
                 className="mt-2"

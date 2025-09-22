@@ -9,7 +9,7 @@ import { useContent } from '@/contexts/ContentContext';
 
 export default function NavigationEditor() {
   const { content, updateContent } = useContent();
-  const navigation = content.navigation;
+  const navigation = content.navigation || [];
 
   const addNavigationItem = () => {
     const newItem = {

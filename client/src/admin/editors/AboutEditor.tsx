@@ -10,38 +10,38 @@ import { useContent } from '@/contexts/ContentContext';
 
 export default function AboutEditor() {
   const { content, updateContent } = useContent();
-  const about = content.about;
+  const about = content.about || {};
 
   const addKpiCard = () => {
     const newKpi = { value: '', label: '' };
-    const updatedKpis = [...about.kpiCards, newKpi];
+    const updatedKpis = [...(about.kpiCards || []), newKpi];
     updateContent('about.kpiCards', updatedKpis);
   };
 
   const removeKpiCard = (index: number) => {
-    const updatedKpis = about.kpiCards.filter((_, i) => i !== index);
+    const updatedKpis = (about.kpiCards || []).filter((_, i) => i !== index);
     updateContent('about.kpiCards', updatedKpis);
   };
 
   const updateKpiCard = (index: number, field: 'value' | 'label', value: string) => {
-    const updatedKpis = [...about.kpiCards];
+    const updatedKpis = [...(about.kpiCards || [])];
     updatedKpis[index][field] = value;
     updateContent('about.kpiCards', updatedKpis);
   };
 
   const addKeyTechnology = () => {
     const newTech = { name: '' };
-    const updatedTechs = [...about.keyTechnologies, newTech];
+    const updatedTechs = [...(about.keyTechnologies || []), newTech];
     updateContent('about.keyTechnologies', updatedTechs);
   };
 
   const removeKeyTechnology = (index: number) => {
-    const updatedTechs = about.keyTechnologies.filter((_, i) => i !== index);
+    const updatedTechs = (about.keyTechnologies || []).filter((_, i) => i !== index);
     updateContent('about.keyTechnologies', updatedTechs);
   };
 
   const updateKeyTechnology = (index: number, value: string) => {
-    const updatedTechs = [...about.keyTechnologies];
+    const updatedTechs = [...(about.keyTechnologies || [])];
     updatedTechs[index].name = value;
     updateContent('about.keyTechnologies', updatedTechs);
   };
@@ -54,17 +54,17 @@ export default function AboutEditor() {
       period: '',
       description: ''
     };
-    const updatedEducation = [...about.education, newEdu];
+    const updatedEducation = [...(about.education || []), newEdu];
     updateContent('about.education', updatedEducation);
   };
 
   const removeEducation = (index: number) => {
-    const updatedEducation = about.education.filter((_, i) => i !== index);
+    const updatedEducation = (about.education || []).filter((_, i) => i !== index);
     updateContent('about.education', updatedEducation);
   };
 
   const updateEducation = (index: number, field: keyof typeof about.education[0], value: string) => {
-    const updatedEducation = [...about.education];
+    const updatedEducation = [...(about.education || [])];
     updatedEducation[index][field] = value;
     updateContent('about.education', updatedEducation);
   };
@@ -91,7 +91,7 @@ export default function AboutEditor() {
               <Label htmlFor="about-title">Section Title</Label>
               <Input
                 id="about-title"
-                value={about.title}
+                value={about.title || ''}
                 onChange={(e) => updateContent('about.title', e.target.value)}
                 placeholder="About"
                 className="mt-2"
@@ -101,7 +101,7 @@ export default function AboutEditor() {
               <Label htmlFor="about-description">First Paragraph</Label>
               <Textarea
                 id="about-description"
-                value={about.description}
+                value={about.description || ''}
                 onChange={(e) => updateContent('about.description', e.target.value)}
                 placeholder="Enter the first paragraph about yourself"
                 className="mt-2"
@@ -112,7 +112,7 @@ export default function AboutEditor() {
               <Label htmlFor="about-second-paragraph">Second Paragraph</Label>
               <Textarea
                 id="about-second-paragraph"
-                value={about.secondParagraph}
+                value={about.secondParagraph || ''}
                 onChange={(e) => updateContent('about.secondParagraph', e.target.value)}
                 placeholder="Enter the second paragraph about yourself"
                 className="mt-2"

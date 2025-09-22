@@ -10,14 +10,14 @@ import { useContent } from '@/contexts/ContentContext';
 
 export default function SkillsEditor() {
   const { content, updateContent } = useContent();
-  const skills = content.skills;
+  const skills = content.skills || {};
 
   const addCategory = () => {
     const newCategory = {
       name: '',
       skills: []
     };
-    const updatedCategories = [...skills.categories, newCategory];
+    const updatedCategories = [...(skills.categories || []), newCategory];
     updateContent('skills.categories', updatedCategories);
   };
 

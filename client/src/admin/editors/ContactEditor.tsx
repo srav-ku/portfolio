@@ -10,24 +10,24 @@ import { useContent } from '@/contexts/ContentContext';
 
 export default function ContactEditor() {
   const { content, updateContent } = useContent();
-  const contact = content.contact;
+  const contact = content.contact || {};
 
   const addBulletPoint = () => {
     const text = prompt('Enter bullet point text:');
     if (text && text.trim()) {
       const newPoint = { text: text.trim() };
-      const updatedPoints = [...contact.bulletPoints, newPoint];
+      const updatedPoints = [...(contact.bulletPoints || []), newPoint];
       updateContent('contact.bulletPoints', updatedPoints);
     }
   };
 
   const removeBulletPoint = (index: number) => {
-    const updatedPoints = contact.bulletPoints.filter((_, i) => i !== index);
+    const updatedPoints = (contact.bulletPoints || []).filter((_, i) => i !== index);
     updateContent('contact.bulletPoints', updatedPoints);
   };
 
   const updateBulletPoint = (index: number, text: string) => {
-    const updatedPoints = [...contact.bulletPoints];
+    const updatedPoints = [...(contact.bulletPoints || [])];
     updatedPoints[index].text = text;
     updateContent('contact.bulletPoints', updatedPoints);
   };
@@ -54,7 +54,7 @@ export default function ContactEditor() {
               <Label htmlFor="contact-title">Section Title</Label>
               <Input
                 id="contact-title"
-                value={contact.title}
+                value={contact.title || ''}
                 onChange={(e) => updateContent('contact.title', e.target.value)}
                 placeholder="Let's Work Together"
                 className="mt-2"
@@ -64,7 +64,7 @@ export default function ContactEditor() {
               <Label htmlFor="contact-subtitle">Subtitle</Label>
               <Input
                 id="contact-subtitle"
-                value={contact.subtitle}
+                value={contact.subtitle || ''}
                 onChange={(e) => updateContent('contact.subtitle', e.target.value)}
                 placeholder="Ready to start your next project?"
                 className="mt-2"
@@ -74,7 +74,7 @@ export default function ContactEditor() {
               <Label htmlFor="contact-description">Description</Label>
               <Textarea
                 id="contact-description"
-                value={contact.description}
+                value={contact.description || ''}
                 onChange={(e) => updateContent('contact.description', e.target.value)}
                 placeholder="Brief description about working together..."
                 className="mt-2"
@@ -91,7 +91,7 @@ export default function ContactEditor() {
             <Label htmlFor="email-card-title">Email Card Title</Label>
             <Input
               id="email-card-title"
-              value={contact.emailCard.title}
+              value={contact.emailCard?.title || ''}
               onChange={(e) => updateContent('contact.emailCard.title', e.target.value)}
               placeholder="Send Me a Message"
               className="mt-2"

@@ -102,10 +102,10 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({
     initializeContent();
   }, [isAdmin, user]);
 
-  // Set up real-time sync for admin users
+  // Set up real-time sync for all users (read-only for non-admin)
   useEffect(() => {
-    if (isAdmin && user) {
-      sectionedFirestoreService.subscribeToAllSections((firestoreContent) => {
+    // Subscribe to Firebase updates for live preview functionality
+    sectionedFirestoreService.subscribeToAllSections((firestoreContent) => {
         if (firestoreContent) {
           // Always update content from Firestore, but only if not currently saving
           if (!saving) {
@@ -113,7 +113,17 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({
               "📥 Loading content from Firestore:",
               Object.keys(firestoreContent),
             );
-            setContent(firestoreContent);
+            
+            // Ensure data integrity - merge with defaults to prevent undefined arrays
+            const safeContent = {
+              ...transformSiteData(), // Default fallbacks
+              ...firestoreContent, // Override with Firestore data
+              // Specifically ensure arrays are always arrays
+              navigation: Array.isArray(firestoreContent.navigation) ? firestoreContent.navigation : transformSiteData().navigation,
+              socialLinks: Array.isArray(firestoreContent.socialLinks) ? firestoreContent.socialLinks : transformSiteData().socialLinks,
+            };
+            
+            setContent(safeContent);
             setIsDirty(false); // Reset dirty state when loading from Firestore
             setLastSaved(new Date());
           }
@@ -123,8 +133,7 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({
       return () => {
         sectionedFirestoreService.unsubscribeFromAllSections();
       };
-    }
-  }, [isAdmin, user, saving]);
+    }, [saving]);
 
   const setValueByPath = useCallback((obj: any, path: string, value: any) => {
     const keys = path.split(".");

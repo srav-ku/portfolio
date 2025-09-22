@@ -12,7 +12,12 @@ import { useContent } from '@/contexts/ContentContext';
 
 export default function ProjectsEditor() {
   const { content, updateContent } = useContent();
-  const projects = content.projects;
+  const projects = content.projects || {};
+  
+  // Safe defaults for rendering
+  const projectsList = projects.projects || [];
+  const filterCategories = projects.filterCategories || [];
+  const projectsTitle = projects.title || '';
 
   const addProject = () => {
     const newProject = {
@@ -25,12 +30,12 @@ export default function ProjectsEditor() {
       github: '',
       technologies: []
     };
-    const updatedProjects = [...projects.projects, newProject];
+    const updatedProjects = [...(projects.projects || []), newProject];
     updateContent('projects.projects', updatedProjects);
   };
 
   const removeProject = (index: number) => {
-    const updatedProjects = projects.projects.filter((_, i) => i !== index);
+    const updatedProjects = (projects.projects || []).filter((_, i) => i !== index);
     updateContent('projects.projects', updatedProjects);
   };
 
@@ -43,13 +48,13 @@ export default function ProjectsEditor() {
   const addTechnologyToProject = (projectIndex: number, tech: string) => {
     if (!tech.trim()) return;
     
-    const updatedProjects = [...projects.projects];
+    const updatedProjects = [...(projects.projects || [])];
     updatedProjects[projectIndex].technologies = [...updatedProjects[projectIndex].technologies, tech.trim()];
     updateContent('projects.projects', updatedProjects);
   };
 
   const removeTechnologyFromProject = (projectIndex: number, techIndex: number) => {
-    const updatedProjects = [...projects.projects];
+    const updatedProjects = [...(projects.projects || [])];
     updatedProjects[projectIndex].technologies = updatedProjects[projectIndex].technologies.filter((_, i) => i !== techIndex);
     updateContent('projects.projects', updatedProjects);
   };
@@ -96,7 +101,7 @@ export default function ProjectsEditor() {
             <Label htmlFor="projects-title">Title</Label>
             <Input
               id="projects-title"
-              value={projects.title}
+              value={projectsTitle}
               onChange={(e) => updateContent('projects.title', e.target.value)}
               placeholder="Featured Projects"
               className="mt-2"
@@ -119,7 +124,7 @@ export default function ProjectsEditor() {
             </Button>
           </div>
           <div className="flex flex-wrap gap-2">
-            {projects.filterCategories.map((category, index) => (
+            {filterCategories.map((category, index) => (
               <Badge key={index} variant="secondary" className="gap-1">
                 {category}
                 <button
@@ -130,7 +135,7 @@ export default function ProjectsEditor() {
                 </button>
               </Badge>
             ))}
-            {projects.filterCategories.length === 0 && (
+            {filterCategories.length === 0 && (
               <p className="text-sm text-muted-foreground">No categories yet. Add categories like "Web Apps", "Mobile", "Open Source"</p>
             )}
           </div>
@@ -152,7 +157,7 @@ export default function ProjectsEditor() {
           </div>
           
           <div className="space-y-8">
-            {projects.projects.map((project, projectIndex) => (
+            {projectsList.map((project, projectIndex) => (
               <Card key={project.id} className="p-6 border-dashed">
                 <div className="flex items-start justify-between mb-6">
                   <h4 className="font-medium">Project #{projectIndex + 1}</h4>
