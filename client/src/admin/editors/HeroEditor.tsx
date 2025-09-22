@@ -101,6 +101,20 @@ export default function HeroEditor() {
               </p>
             </div>
           </div>
+          <div className="mt-4">
+            <Label htmlFor="hero-button-url">Button URL</Label>
+            <Input
+              id="hero-button-url"
+              value={hero.buttons?.primary?.url || ''}
+              onChange={(e) => updateContent('hero.buttons.primary.url', e.target.value)}
+              placeholder="https://example.com/resume.pdf"
+              className="mt-2"
+              type="url"
+            />
+            <p className="text-xs text-muted-foreground mt-1">
+              URL that opens when the button is clicked (leave empty to disable)
+            </p>
+          </div>
         </Card>
       </div>
     </motion.div>

@@ -9,7 +9,8 @@ import { useContent } from '@/contexts/ContentContext';
 
 export default function SocialEditor() {
   const { content, updateContent } = useContent();
-  const socialLinks = content.socialLinks || [];
+  // Ensure socialLinks is always an array with defensive programming
+  const socialLinks = Array.isArray(content?.socialLinks) ? content.socialLinks : [];
 
   const addSocialLink = () => {
     const newLink = {

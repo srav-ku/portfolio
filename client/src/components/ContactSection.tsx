@@ -83,8 +83,8 @@ export default function ContactSection() {
     }
   };
   return (
-    <section className="min-h-screen-safe section-padding section-spacing pt-20 lg:pt-24">
-      <div className="max-w-4xl mx-auto">
+    <section className="min-h-screen-safe section-padding section-spacing pt-20 lg:pt-24 overflow-x-clip">
+      <div className="mx-auto w-full max-w-screen-md px-4 sm:px-6 md:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -99,14 +99,14 @@ export default function ContactSection() {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-12">
+        <div className="grid md:grid-cols-2 gap-6 sm:gap-8 md:gap-12 min-w-0">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <Card className="p-8 h-full bg-gradient-to-br from-primary/5 to-transparent border-primary/20">
+            <Card className="p-4 sm:p-6 md:p-8 h-full bg-gradient-to-br from-primary/5 to-transparent border-primary/20 overflow-hidden min-w-0">
               <h3 className="text-2xl font-semibold mb-6">{contactContent.emailCard.title}</h3>
               <p className="text-muted-foreground mb-6 leading-relaxed">
                 {contactContent.description}
@@ -123,7 +123,7 @@ export default function ContactSection() {
 
               {/* Email Me Card */}
               <Card 
-                className="p-6 hover-elevate cursor-pointer transition-all" 
+                className="p-4 sm:p-6 hover-elevate cursor-pointer transition-all" 
                 onClick={() => window.open(`mailto:${personalInfo.email}`, '_blank')}
               >
                 <div className="flex items-center gap-4">
@@ -146,12 +146,12 @@ export default function ContactSection() {
             transition={{ duration: 0.8, delay: 0.2 }}
             viewport={{ once: true }}
           >
-            <Card className="p-8 h-full">
+            <Card className="p-4 sm:p-6 md:p-8 h-full overflow-hidden min-w-0">
               <h3 className="text-xl font-semibold mb-6">{contactContent.form.title}</h3>
               
-              <form className="space-y-6" onSubmit={handleSubmit}>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
+              <form className="space-y-6 max-w-full min-w-0" onSubmit={handleSubmit}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 min-w-0">
+                  <div className="min-w-0">
                     <label htmlFor="firstName" className="block text-sm font-medium mb-2">
                       {contactContent.form.fields.firstName.label}
                     </label>
@@ -162,10 +162,11 @@ export default function ContactSection() {
                       onChange={handleInputChange}
                       placeholder={contactContent.form.fields.firstName.placeholder}
                       data-testid="input-first-name"
+                      className="w-full max-w-full"
                       required
                     />
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <label htmlFor="lastName" className="block text-sm font-medium mb-2">
                       {contactContent.form.fields.lastName.label}
                     </label>
@@ -176,6 +177,7 @@ export default function ContactSection() {
                       onChange={handleInputChange}
                       placeholder={contactContent.form.fields.lastName.placeholder}
                       data-testid="input-last-name"
+                      className="w-full max-w-full"
                       required
                     />
                   </div>
@@ -193,6 +195,7 @@ export default function ContactSection() {
                     onChange={handleInputChange}
                     placeholder={contactContent.form.fields.email.placeholder}
                     data-testid="input-email"
+                    className="w-full max-w-full"
                     required
                   />
                 </div>
@@ -208,6 +211,7 @@ export default function ContactSection() {
                     onChange={handleInputChange}
                     placeholder={contactContent.form.fields.subject.placeholder}
                     data-testid="input-subject"
+                    className="w-full max-w-full"
                     required
                   />
                 </div>
@@ -224,6 +228,7 @@ export default function ContactSection() {
                     placeholder={contactContent.form.fields.message.placeholder}
                     rows={4}
                     data-testid="input-message"
+                    className="w-full max-w-full"
                     required
                   />
                 </div>

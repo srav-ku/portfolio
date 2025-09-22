@@ -36,7 +36,7 @@ export default function HeroSection({ onScrollToNext }: HeroSectionProps) {
       </div>
       
       {/* Content */}
-      <div className="relative z-10 max-w-4xl mx-auto text-center">
+      <div className="relative z-10 max-w-4xl mx-auto text-center px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -49,7 +49,7 @@ export default function HeroSection({ onScrollToNext }: HeroSectionProps) {
           </h1>
           
           <motion.p 
-            className="text-fluid-lg lg:text-fluid-xl text-muted-foreground mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed px-4 motion-reduce-ok"
+            className="text-fluid-lg lg:text-fluid-xl text-muted-foreground mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed px-2 sm:px-4 motion-reduce-ok"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
