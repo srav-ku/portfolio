@@ -50,19 +50,44 @@ export default function ContactSection() {
     setSubmitStatus('idle');
     
     try {
-      const response = await fetch('/api/contact', {
+      // Check if Web3Forms access key is available
+      const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
+      if (!accessKey) {
+        setSubmitStatus('error');
+        setSubmitMessage('Contact form is not properly configured. Please email me directly.');
+        setIsSubmitting(false);
+        return;
+      }
+      
+      // Create form object for JSON submission (more reliable than FormData)
+      const formPayload = {
+        access_key: accessKey,
+        name: `${formData.firstName} ${formData.lastName}`,
+        email: formData.email,
+        subject: formData.subject,
+        message: formData.message,
+        from_name: 'Portfolio Contact Form',
+        replyto: formData.email
+      };
+      
+      const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formPayload)
       });
+      
+      if (!response.ok) {
+        throw new Error(`Server responded with ${response.status}: ${response.statusText}`);
+      }
       
       const result = await response.json();
       
       if (result.success) {
         setSubmitStatus('success');
-        setSubmitMessage(result.message);
+        setSubmitMessage("Thanks for reaching out! Your message has been sent successfully. I'll get back to you soon.");
         // Reset form on success
         setFormData({
           firstName: '',
@@ -73,11 +98,15 @@ export default function ContactSection() {
         });
       } else {
         setSubmitStatus('error');
-        setSubmitMessage(result.message || 'Something went wrong. Please try again.');
+        setSubmitMessage(result.message || 'Something went wrong while sending your message. Please try again or email me directly.');
       }
-    } catch (error) {
+    } catch (error: any) {
       setSubmitStatus('error');
-      setSubmitMessage('Network error. Please check your connection and try again.');
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        setSubmitMessage('Unable to connect to the email service. Please email me directly.');
+      } else {
+        setSubmitMessage('Something went wrong while sending your message. Please try again or email me directly.');
+      }
     } finally {
       setIsSubmitting(false);
     }

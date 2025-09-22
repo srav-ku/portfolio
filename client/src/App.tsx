@@ -6,7 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { ContentProvider } from "@/contexts/ContentContext";
 import Portfolio from "@/components/Portfolio";
-import NotFound from "@/pages/not-found";
+import NotFound from "@/pages/NotFound";
 
 function Router() {
   return (
