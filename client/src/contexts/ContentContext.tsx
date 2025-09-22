@@ -104,9 +104,11 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Set up real-time sync for all users (read-only for non-admin)
   useEffect(() => {
+    let isComponentMounted = true;
+    
     // Subscribe to Firebase updates for live preview functionality
     sectionedFirestoreService.subscribeToAllSections((firestoreContent) => {
-        if (firestoreContent) {
+        if (firestoreContent && isComponentMounted) {
           // Always update content from Firestore, but only if not currently saving
           if (!saving) {
             console.log(
@@ -115,12 +117,21 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({
             );
             
             // Ensure data integrity - merge with defaults to prevent undefined arrays
+            const defaultData = transformSiteData();
             const safeContent = {
-              ...transformSiteData(), // Default fallbacks
+              ...defaultData, // Default fallbacks
               ...firestoreContent, // Override with Firestore data
               // Specifically ensure arrays are always arrays
-              navigation: Array.isArray(firestoreContent.navigation) ? firestoreContent.navigation : transformSiteData().navigation,
-              socialLinks: Array.isArray(firestoreContent.socialLinks) ? firestoreContent.socialLinks : transformSiteData().socialLinks,
+              navigation: Array.isArray(firestoreContent.navigation) ? firestoreContent.navigation : defaultData.navigation,
+              socialLinks: Array.isArray(firestoreContent.socialLinks) ? firestoreContent.socialLinks : defaultData.socialLinks,
+              // Ensure nested objects exist
+              hero: firestoreContent.hero ? { ...defaultData.hero, ...firestoreContent.hero } : defaultData.hero,
+              about: firestoreContent.about ? { ...defaultData.about, ...firestoreContent.about } : defaultData.about,
+              skills: firestoreContent.skills ? { ...defaultData.skills, ...firestoreContent.skills } : defaultData.skills,
+              projects: firestoreContent.projects ? { ...defaultData.projects, ...firestoreContent.projects } : defaultData.projects,
+              experience: firestoreContent.experience ? { ...defaultData.experience, ...firestoreContent.experience } : defaultData.experience,
+              certifications: firestoreContent.certifications ? { ...defaultData.certifications, ...firestoreContent.certifications } : defaultData.certifications,
+              contact: firestoreContent.contact ? { ...defaultData.contact, ...firestoreContent.contact } : defaultData.contact,
             };
             
             setContent(safeContent);
@@ -131,6 +142,7 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({
       });
 
       return () => {
+        isComponentMounted = false;
         sectionedFirestoreService.unsubscribeFromAllSections();
       };
     }, [saving]);

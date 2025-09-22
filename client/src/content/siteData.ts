@@ -24,6 +24,7 @@ export const heroContent = {
     primary: {
       text: "My Resume",
       action: "resume",
+      url: "https://drive.google.com/file/d/1234567890/view", // This can be updated in admin
     },
   },
 };

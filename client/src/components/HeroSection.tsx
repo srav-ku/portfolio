@@ -15,18 +15,19 @@ export default function HeroSection({ onScrollToNext }: HeroSectionProps) {
       <div className="absolute inset-0 z-0">
         <picture>
           <source 
-            srcSet="/attached_assets/clean-workspace-bg.png" 
+            srcSet="/attached_assets/hero-background.png" 
             type="image/png"
           />
           <img 
-            src="/attached_assets/clean-workspace-bg.png"
+            src="/attached_assets/hero-background.png"
             alt=""
-            className="w-full h-full object-cover object-center opacity-30"
+            className="w-full h-full object-cover object-center opacity-20"
             loading="eager"
             decoding="async"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.style.display = 'none';
+              console.warn('Background image failed to load');
             }}
           />
         </picture>
@@ -71,7 +72,11 @@ export default function HeroSection({ onScrollToNext }: HeroSectionProps) {
                 size="lg" 
                 className="w-full sm:w-auto px-6 sm:px-8 py-3 text-base sm:text-lg min-h-[44px] relative overflow-hidden group"
                 data-testid="button-my-resume"
-                onClick={() => console.log('My Resume clicked')}
+                onClick={() => {
+                  if (heroContent.buttons.primary.url) {
+                    window.open(heroContent.buttons.primary.url, '_blank');
+                  }
+                }}
               >
                 <motion.span
                   className="relative z-10"

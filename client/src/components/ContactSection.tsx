@@ -3,12 +3,85 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Mail, Send, ArrowRight } from 'lucide-react';
+import { Mail, Send, ArrowRight, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import { useContactContent, usePersonalInfo } from '@/contexts/ContentContext';
+import { useState } from 'react';
 
 export default function ContactSection() {
   const contactContent = useContactContent();
   const personalInfo = usePersonalInfo();
+  
+  // Form state
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    subject: '',
+    message: ''
+  });
+  
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [submitMessage, setSubmitMessage] = useState('');
+  
+  // Handle form input changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    // Clear status when user starts typing again
+    if (submitStatus !== 'idle') {
+      setSubmitStatus('idle');
+      setSubmitMessage('');
+    }
+  };
+  
+  // Handle form submission
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Basic validation
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.subject || !formData.message) {
+      setSubmitStatus('error');
+      setSubmitMessage('Please fill in all fields.');
+      return;
+    }
+    
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
+    
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        setSubmitStatus('success');
+        setSubmitMessage(result.message);
+        // Reset form on success
+        setFormData({
+          firstName: '',
+          lastName: '',
+          email: '',
+          subject: '',
+          message: ''
+        });
+      } else {
+        setSubmitStatus('error');
+        setSubmitMessage(result.message || 'Something went wrong. Please try again.');
+      }
+    } catch (error) {
+      setSubmitStatus('error');
+      setSubmitMessage('Network error. Please check your connection and try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   return (
     <section className="min-h-screen-safe section-padding section-spacing pt-20 lg:pt-24">
       <div className="max-w-4xl mx-auto">
@@ -76,7 +149,7 @@ export default function ContactSection() {
             <Card className="p-8 h-full">
               <h3 className="text-xl font-semibold mb-6">{contactContent.form.title}</h3>
               
-              <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); console.log('Form submitted'); }}>
+              <form className="space-y-6" onSubmit={handleSubmit}>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label htmlFor="firstName" className="block text-sm font-medium mb-2">
@@ -84,8 +157,12 @@ export default function ContactSection() {
                     </label>
                     <Input 
                       id="firstName" 
+                      name="firstName"
+                      value={formData.firstName}
+                      onChange={handleInputChange}
                       placeholder={contactContent.form.fields.firstName.placeholder}
                       data-testid="input-first-name"
+                      required
                     />
                   </div>
                   <div>
@@ -94,8 +171,12 @@ export default function ContactSection() {
                     </label>
                     <Input 
                       id="lastName" 
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={handleInputChange}
                       placeholder={contactContent.form.fields.lastName.placeholder}
                       data-testid="input-last-name"
+                      required
                     />
                   </div>
                 </div>
@@ -106,9 +187,13 @@ export default function ContactSection() {
                   </label>
                   <Input 
                     id="email" 
-                    type="email" 
-                    placeholder="john@example.com"
+                    name="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    placeholder={contactContent.form.fields.email.placeholder}
                     data-testid="input-email"
+                    required
                   />
                 </div>
                 
@@ -118,8 +203,12 @@ export default function ContactSection() {
                   </label>
                   <Input 
                     id="subject" 
-                    placeholder="Project inquiry"
+                    name="subject"
+                    value={formData.subject}
+                    onChange={handleInputChange}
+                    placeholder={contactContent.form.fields.subject.placeholder}
                     data-testid="input-subject"
+                    required
                   />
                 </div>
                 
@@ -129,19 +218,48 @@ export default function ContactSection() {
                   </label>
                   <Textarea 
                     id="message" 
-                    placeholder="Tell me about your project..."
+                    name="message"
+                    value={formData.message}
+                    onChange={handleInputChange}
+                    placeholder={contactContent.form.fields.message.placeholder}
                     rows={4}
                     data-testid="input-message"
+                    required
                   />
                 </div>
+                
+                {/* Status Messages */}
+                {submitStatus === 'success' && (
+                  <div className="flex items-center gap-2 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg text-green-800 dark:text-green-200">
+                    <CheckCircle className="w-5 h-5 flex-shrink-0" />
+                    <p className="text-sm">{submitMessage}</p>
+                  </div>
+                )}
+                
+                {submitStatus === 'error' && (
+                  <div className="flex items-center gap-2 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-800 dark:text-red-200">
+                    <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                    <p className="text-sm">{submitMessage}</p>
+                  </div>
+                )}
                 
                 <Button 
                   type="submit" 
                   className="w-full"
+                  disabled={isSubmitting}
                   data-testid="button-send-message"
                 >
-                  <Send className="w-4 h-4 mr-2" />
-                  {contactContent.form.submitButton.text}
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4 mr-2" />
+                      {contactContent.form.submitButton.text}
+                    </>
+                  )}
                 </Button>
               </form>
             </Card>
