@@ -23,6 +23,9 @@ export default defineConfig({
     "import.meta.env.VITE_FIREBASE_API_KEY": JSON.stringify(
       process.env.VITE_FIREBASE_API_KEY,
     ),
+    "import.meta.env.VITE_WEB3FORMS_ACCESS_KEY": JSON.stringify(
+      process.env.VITE_WEB3FORMS_ACCESS_KEY,
+    ),
   },
   resolve: {
     alias: {
