@@ -24,6 +24,7 @@ export default function ContactSection() {
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [submitMessage, setSubmitMessage] = useState('');
   
+  
   // Handle form input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -52,6 +53,7 @@ export default function ContactSection() {
     try {
       // Check if Web3Forms access key is available
       const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
+      
       if (!accessKey) {
         setSubmitStatus('error');
         setSubmitMessage('Contact form is not properly configured. Please email me directly.');
@@ -79,11 +81,18 @@ export default function ContactSection() {
         body: JSON.stringify(formPayload)
       });
       
-      if (!response.ok) {
-        throw new Error(`Server responded with ${response.status}: ${response.statusText}`);
-      }
-      
       const result = await response.json();
+      
+      if (!response.ok) {
+        // Handle Web3Forms domain blocking specifically
+        if (result.message && result.message.includes('domain TLD is blocked')) {
+          setSubmitStatus('error');
+          setSubmitMessage('Form submissions from this development domain are restricted. Please contact me directly via email for now.');
+          setIsSubmitting(false);
+          return;
+        }
+        throw new Error(result.message || `Server responded with ${response.status}: ${response.statusText}`);
+      }
       
       if (result.success) {
         setSubmitStatus('success');
@@ -105,7 +114,7 @@ export default function ContactSection() {
       if (error.name === 'TypeError' && error.message.includes('fetch')) {
         setSubmitMessage('Unable to connect to the email service. Please email me directly.');
       } else {
-        setSubmitMessage('Something went wrong while sending your message. Please try again or email me directly.');
+        setSubmitMessage(error.message || 'Something went wrong while sending your message. Please try again or email me directly.');
       }
     } finally {
       setIsSubmitting(false);

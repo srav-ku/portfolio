@@ -1,17 +1,12 @@
 import React from 'react';
-import { Moon, Sun, Eye, EyeOff, Save, Download, Upload, RotateCcw, LogOut, Loader2 } from 'lucide-react';
+import { Moon, Sun, Save, Download, Upload, RotateCcw, LogOut, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useContent } from '@/contexts/ContentContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { motion } from 'framer-motion';
 
-interface AdminHeaderProps {
-  showPreview: boolean;
-  onTogglePreview: () => void;
-}
-
-export default function AdminHeader({ showPreview, onTogglePreview }: AdminHeaderProps) {
+export default function AdminHeader() {
   const { theme, toggleTheme } = useTheme();
   const { isDirty, lastSaved, saving, saveToFirestore, exportData, importData, resetContent } = useContent();
   const { logout, user } = useAuth();
@@ -150,15 +145,6 @@ export default function AdminHeader({ showPreview, onTogglePreview }: AdminHeade
 
           <div className="w-px h-6 bg-border" />
 
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onTogglePreview}
-            className="gap-2"
-          >
-            {showPreview ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-            {showPreview ? 'Hide' : 'Show'} Preview
-          </Button>
 
           <Button
             variant="ghost"

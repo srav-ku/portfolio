@@ -12,10 +12,9 @@ import SocialEditor from '../editors/SocialEditor';
 
 interface AdminContentProps {
   activeSection: AdminSection;
-  showPreview: boolean;
 }
 
-export default function AdminContent({ activeSection, showPreview }: AdminContentProps) {
+export default function AdminContent({ activeSection }: AdminContentProps) {
   const renderEditor = () => {
     switch (activeSection) {
       case 'hero':
@@ -42,8 +41,8 @@ export default function AdminContent({ activeSection, showPreview }: AdminConten
   };
 
   return (
-    <div className={`flex-1 overflow-y-auto ${showPreview ? 'max-w-2xl' : ''}`}>
-      <div className="p-6">
+    <div className="flex-1 overflow-y-auto">
+      <div className="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto">
         {renderEditor()}
       </div>
     </div>

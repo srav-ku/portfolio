@@ -24,7 +24,6 @@ export type AdminSection =
 function AuthenticatedAdminApp() {
   const { user, isAdmin, loading } = useAuth();
   const [activeSection, setActiveSection] = useState<AdminSection>('hero');
-  const [showPreview, setShowPreview] = useState(true);
 
   if (loading) {
     return (
@@ -44,10 +43,7 @@ function AuthenticatedAdminApp() {
   return (
     <ContentProvider>
       <div className="min-h-screen bg-background text-foreground">
-        <AdminHeader 
-          showPreview={showPreview}
-          onTogglePreview={() => setShowPreview(!showPreview)}
-        />
+        <AdminHeader />
         <AdminLayout>
           <AdminSidebar 
             activeSection={activeSection}
@@ -55,9 +51,7 @@ function AuthenticatedAdminApp() {
           />
           <AdminContent 
             activeSection={activeSection}
-            showPreview={showPreview}
           />
-          {showPreview && <AdminPreview />}
         </AdminLayout>
       </div>
     </ContentProvider>
