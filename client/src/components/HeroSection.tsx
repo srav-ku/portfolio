@@ -11,29 +11,15 @@ export default function HeroSection({ onScrollToNext }: HeroSectionProps) {
   const heroContent = useHeroContent();
   return (
     <section className="min-h-screen-safe flex items-center justify-center relative overflow-hidden section-padding safe-top">
-      {/* Background image with overlay - optimized loading */}
-      <div className="absolute inset-0 z-0">
-        <picture>
-          <source 
-            srcSet="/attached_assets/hero-background.png" 
-            type="image/png"
-          />
-          <img 
-            src="/attached_assets/hero-background.png"
-            alt=""
-            className="w-full h-full object-cover object-center opacity-20"
-            loading="eager"
-            decoding="async"
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.style.display = 'none';
-              console.warn('Background image failed to load');
-            }}
-          />
-        </picture>
-        {/* Light overlay for subtle background */}
-        <div className="absolute inset-0 bg-background/60" />
-      </div>
+      {/* Background image with overlay */}
+      <div 
+        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-20"
+        style={{
+          backgroundImage: `url('/images/hero-background.png')`
+        }}
+      />
+      {/* Light overlay for subtle background */}
+      <div className="absolute inset-0 z-0 bg-background/60" />
       
       {/* Content */}
       <div className="relative z-10 max-w-4xl mx-auto text-center px-4 sm:px-6">

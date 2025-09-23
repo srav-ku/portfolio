@@ -1,10 +1,46 @@
 import { motion } from 'framer-motion';
-import { Github, Linkedin, Twitter, Mail, ExternalLink } from 'lucide-react';
+import { 
+  Github, 
+  Linkedin, 
+  Twitter, 
+  Mail, 
+  ExternalLink, 
+  Send,
+  Phone,
+  MessageCircle,
+  Instagram,
+  Facebook,
+  Youtube,
+  Globe,
+  User,
+  MapPin,
+  Calendar,
+  Briefcase
+} from 'lucide-react';
 import { useSocialLinks, usePersonalInfo } from '@/contexts/ContentContext';
 
-// Icon mapping for social links
-const iconMap: Record<string, any> = {
-  Mail, Github, Linkedin, Twitter, ExternalLink: Mail
+// Icon mapping for social links - supports many common Lucide icons
+const getIconComponent = (iconName: string) => {
+  const icons: Record<string, any> = {
+    'Mail': Mail,
+    'Github': Github,
+    'Linkedin': Linkedin,
+    'Twitter': Twitter,
+    'ExternalLink': ExternalLink,
+    'Send': Send,
+    'Phone': Phone,
+    'MessageCircle': MessageCircle,
+    'Instagram': Instagram,
+    'Facebook': Facebook,
+    'Youtube': Youtube,
+    'Globe': Globe,
+    'User': User,
+    'MapPin': MapPin,
+    'Calendar': Calendar,
+    'Briefcase': Briefcase
+  };
+  
+  return icons[iconName] || Mail;
 };
 
 export default function SocialFloatingIcons() {
@@ -43,7 +79,7 @@ export default function SocialFloatingIcons() {
         {/* Social Icons */}
         <div className="flex flex-col gap-3">
           {socialLinks.map((social, index) => {
-            const IconComponent = iconMap[social.iconName] || iconMap.Mail;
+            const IconComponent = getIconComponent(social.iconName);
             return (
               <motion.a
                 key={social.label}
